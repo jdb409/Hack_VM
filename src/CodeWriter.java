@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,13 +21,39 @@ public class CodeWriter {
     public void writeArithMetic(String command) {
         if (command.equalsIgnoreCase("add")) {
             add();
+        } else if (command.equalsIgnoreCase("sub")) {
+            sub();
         } else if (command.equalsIgnoreCase("eq")) {
-            eq();
+            logicalTwoArg("eq");
         } else if (command.equalsIgnoreCase("lt")) {
-            lt();
+            logicalTwoArg("lt");
         } else if (command.equalsIgnoreCase("gt")) {
-            gt();
+            logicalTwoArg("gt");
+        }else if (command.equalsIgnoreCase("neg")) {
+            neg();
+        }else if (command.equalsIgnoreCase("and")) {
+            and();
+        }else if (command.equalsIgnoreCase("or")) {
+            or();
+        }else if (command.equalsIgnoreCase("not")) {
+            not();
         }
+    }
+
+    private void and(){
+        lines.add("");
+        lines.add("//and");
+        popLastTwo();
+        lines.add("M=M&D");
+        advanceSP();
+    }
+
+    private void or(){
+        lines.add("");
+        lines.add("//or");
+        popLastTwo();
+        lines.add("M=M|D");
+        advanceSP();
     }
 
     private void add() {
@@ -39,24 +64,44 @@ public class CodeWriter {
         advanceSP();
     }
 
-    private void eq() {
-        index++;
-        System.out.println(index);
+    private void sub() {
         lines.add("");
-        lines.add("//eq");
+        lines.add("//sub");
+        popLastTwo();
+        lines.add("M=M-D");
+        advanceSP();
+    }
+
+    private void logicalTwoArg(String command) {
+        String jumpVal = "";
+        String label = "";
+        if (command.equals("eq")){
+            jumpVal = "JEQ";
+            label = "EQUAL";
+        } else if (command.equals("gt")){
+            jumpVal = "JGT";
+            label = "GREATERTHAN";
+        } else if (command.equals("lt")){
+            jumpVal = "JLT";
+            label = "LESSTHAN";
+        }
+
+        index++;
+        lines.add("");
+        lines.add("//"+command);
         popLastTwo();
 //        check if equal
-        lines.add("M=D-M");
+        lines.add("M=M-D");
         lines.add("D=M");
-        lines.add("@EQUAL" + index);
-        lines.add("D;JEQ");
-        lines.add("@NOTEQUAL" + index);
+        lines.add("@"+label+ index);
+        lines.add("D;"+jumpVal);
+        lines.add("@NOT"+label + index);
         lines.add("0;JMP");
-        lines.add("(EQUAL" + index + ")");
+        lines.add("("+label + index + ")");
         lines.add("D=-1");
         lines.add("@END" + index);
         lines.add("0;JMP");
-        lines.add("(NOTEQUAL" + index + ")");
+        lines.add("(NOT"+label + index + ")");
         lines.add("D=0");
         lines.add("(END" + index + ")");
         lines.add("@SP");
@@ -66,57 +111,20 @@ public class CodeWriter {
         lines.add("M=M+1");
     }
 
-    private void lt() {
-        index++;
-        System.out.println(index);
+    private void neg(){
         lines.add("");
-        lines.add("//lt");
-        popLastTwo();
-//        check if lt
-        lines.add("M=M-D");
-        lines.add("D=M");
-        lines.add("@LESSTHAN" + index);
-        lines.add("D;JLT");
-        lines.add("@NOTLESSTHAN" + index);
-        lines.add("0;JMP");
-        lines.add("(LESSTHAN" + index + ")");
-        lines.add("D=-1");
-        lines.add("@END" + index);
-        lines.add("0;JMP");
-        lines.add("(NOTLESSTHAN" + index + ")");
-        lines.add("D=0");
-        lines.add("(END" + index + ")");
-        lines.add("@SP");
-        lines.add("A=M");
-        lines.add("M=D");
-        lines.add("@SP");
-        lines.add("M=M+1");
+        lines.add("//neg");
+        popLastOne();
+        lines.add("M=-M");
+        advanceSP();
     }
 
-    private void gt() {
-        index++;
+    private void not(){
         lines.add("");
-        lines.add("//gt");
-        popLastTwo();
-//        check if lt
-        lines.add("M=M-D");
-        lines.add("D=M");
-        lines.add("@GREATERTHAN" + index);
-        lines.add("D;JGT");
-        lines.add("@NOTGREATERTHAN" + index);
-        lines.add("0;JMP");
-        lines.add("(GREATERTHAN" + index + ")");
-        lines.add("D=-1");
-        lines.add("@END" + index);
-        lines.add("0;JMP");
-        lines.add("(NOTGREATERTHAN" + index + ")");
-        lines.add("D=0");
-        lines.add("(END" + index + ")");
-        lines.add("@SP");
-        lines.add("A=M");
-        lines.add("M=D");
-        lines.add("@SP");
-        lines.add("M=M+1");
+        lines.add("//not");
+        popLastOne();
+        lines.add("M=!M");
+        advanceSP();
     }
 
     private void popLastTwo() {
@@ -124,6 +132,12 @@ public class CodeWriter {
         lines.add("M=M-1");
         lines.add("A=M");
         lines.add("D=M");
+        lines.add("@SP");
+        lines.add("M=M-1");
+        lines.add("A=M");
+    }
+
+    private void popLastOne(){
         lines.add("@SP");
         lines.add("M=M-1");
         lines.add("A=M");
