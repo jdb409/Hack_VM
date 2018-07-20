@@ -6,11 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Parser {
-    private String fileName;
     private Iterator<String> lines = null;
     private String current;
 
-    private enum Command {
+    public enum Command {
         ARITHMETIC, PUSH, POP, LABEL, GOTO, IF, FUNCTION, RETURN, CALL
     }
 
@@ -30,6 +29,17 @@ public class Parser {
         }
 
     }
+
+    public void advance() {
+        while (hasMoreCommands()) {
+            String line = lines.next();
+            if (!line.startsWith("//") && !line.equalsIgnoreCase("")) {
+                current = line;
+                break;
+            }
+        }
+    }
+
 
 
     public Command getCommandType() {
@@ -68,15 +78,6 @@ public class Parser {
         return this.lines.hasNext();
     }
 
-    private void advance() {
-        while (hasMoreCommands()) {
-            String line = lines.next();
-            if (!line.startsWith("//") && !line.equalsIgnoreCase("")) {
-                current = line;
-                break;
-            }
-        }
-    }
 
     private Iterator<String> readFile(Path fileName) {
         List<String> lines = new ArrayList<>();
@@ -94,5 +95,13 @@ public class Parser {
 
     public void setLines(Iterator<String> lines) {
         this.lines = lines;
+    }
+
+    public String getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(String current) {
+        this.current = current;
     }
 }
