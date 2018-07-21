@@ -14,7 +14,7 @@ public class Main {
         while (parser.getLines().hasNext()) {
             parser.advance();
             if (parser.getCommandType() == Parser.Command.ARITHMETIC){
-                codeWriter.writeArithMetic(parser.getCurrent());
+                codeWriter.writeArithmetic(parser.getCurrent());
             } else {
                 codeWriter.writePushPop(parser.getCommandType(), parser.arg1(), parser.arg2());
             }
