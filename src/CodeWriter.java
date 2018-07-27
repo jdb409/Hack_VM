@@ -15,7 +15,7 @@ public class CodeWriter {
         String fileName = outputFile.split("\\.")[0];
 
         if (outputFile.contains(".vm")) {
-            this.output = Paths.get("/Users/jon/Desktop/nand2tetris/projects/08/ProgramFlow/" + fileName,
+            this.output = Paths.get("/Users/jon/Desktop/nand2tetris/projects/07/MemoryAccess/" + fileName,
                     fileName + ".asm");
         } else {
             fileName = outputFile;
