@@ -15,7 +15,7 @@ public class CodeWriter {
         String fileName = outputFile.split("\\.")[0];
 
         if (outputFile.contains(".vm")) {
-            this.output = Paths.get("/Users/jon/Desktop/nand2tetris/projects/07/MemoryAccess/" + fileName,
+            this.output = Paths.get("/Users/jon/Desktop/nand2tetris/projects/08/ProgramFlow/" + fileName,
                     fileName + ".asm");
         } else {
             fileName = outputFile;
@@ -48,7 +48,7 @@ public class CodeWriter {
 
     //    GOTO logic
     public void writeGoto(String label) {
-        lines.add("@"+label);
+        lines.add("@" + label);
         lines.add("0;JMP");
     }
 
@@ -57,7 +57,7 @@ public class CodeWriter {
         System.out.println(label);
         popLastOne();
         lines.add("D=M");
-        lines.add("@"+label);
+        lines.add("@" + label);
         lines.add("D;JNE");
 
     }
@@ -120,11 +120,41 @@ public class CodeWriter {
         } else if (segment.equals("temp")) {
             index = index + 5;
             lines.add("@" + index);
-            pop(index);
+            lines.add("D=A");
+            lines.add("@13");
+            lines.add("M=D");
+//            get value to pop, d = value
+            lines.add("@SP");
+            lines.add("M=M-1");
+            lines.add("A=M");
+            lines.add("D=M");
+//            access  register 13
+            lines.add("@13");
+            lines.add("A=M");
+            lines.add("M=D");
+//            push to stack
+            lines.add("@SP");
+            lines.add("A=M");
+            lines.add("M=D");
         } else if (segment.equals("pointer")) {
             index = index + 3;
             lines.add("@" + index);
-            pop(index);
+            lines.add("D=A");
+            lines.add("@13");
+            lines.add("M=D");
+//            get value to pop, d = value
+            lines.add("@SP");
+            lines.add("M=M-1");
+            lines.add("A=M");
+            lines.add("D=M");
+//            access  register 13
+            lines.add("@13");
+            lines.add("A=M");
+            lines.add("M=D");
+//            push to stack
+            lines.add("@SP");
+            lines.add("A=M");
+            lines.add("M=D");
         }
     }
 
