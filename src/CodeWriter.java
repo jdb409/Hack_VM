@@ -12,11 +12,54 @@ public class CodeWriter {
     private String fileName;
 
     public CodeWriter(String outputFile) {
-        this.output = Paths.get("/Users/jon/Desktop/nand2tetris/projects/07/MemoryAccess/" + outputFile.split("\\.")[0],
-                outputFile.split("\\.")[0] + ".asm");
-        System.out.println(output);
+        String fileName = outputFile.split("\\.")[0];
+
+        if (outputFile.contains(".vm")) {
+            this.output = Paths.get("/Users/jon/Desktop/nand2tetris/projects/07/MemoryAccess/" + fileName,
+                    fileName + ".asm");
+        } else {
+            fileName = outputFile;
+            this.output = Paths.get("/Users/jon/Desktop/nand2tetris/projects/08/FunctionCalls/" + fileName,
+                    fileName + ".asm");
+        }
+
+
+        System.out.println("output: " + this.output);
         this.lines = new ArrayList<>();
         this.fileName = outputFile.split("\\.")[0];
+    }
+
+    public void writeLabelGotoIf(Parser.Command command, String label) {
+        lines.add("");
+        lines.add(String.format("//%s %s", command, label));
+        if (command.equals(Parser.Command.LABEL)) {
+            writeLabel(label);
+        } else if (command.equals(Parser.Command.GOTO)) {
+            writeGoto(label);
+        } else if (command.equals(Parser.Command.IF)) {
+            writeIf(label);
+        }
+    }
+
+    //    LABEL logic
+    public void writeLabel(String label) {
+        lines.add(String.format("(%s)", label));
+    }
+
+    //    GOTO logic
+    public void writeGoto(String label) {
+        lines.add("@"+label);
+        lines.add("0;JMP");
+    }
+
+    //    IF logic
+    public void writeIf(String label) {
+        System.out.println(label);
+        popLastOne();
+        lines.add("D=M");
+        lines.add("@"+label);
+        lines.add("D;JNE");
+
     }
 
 //    PUSH/POP Logic
@@ -30,6 +73,7 @@ public class CodeWriter {
             handlePop(segment, index);
         }
     }
+
     private void handlePush(String segment, int index) {
         if (segment.equals("constant")) {
             pushConstant(index);
@@ -311,8 +355,8 @@ public class CodeWriter {
         try {
             Files.write(output, lines);
         } catch (IOException e) {
-            System.out.println("line 25, CodeWriter");
-            System.out.println(e.getStackTrace());
+            System.out.println(e);
+            throw new Error("No File named: " + output);
         }
     }
 }

@@ -14,32 +14,26 @@ public class Parser {
     }
 
     public Parser(String fileName) {
-        this.lines = readFile(Paths.get("files", fileName));
+        this.lines = readFile(Paths.get("examples", fileName));
     }
 
-
-    public void iterate() {
-        while (lines.hasNext()) {
-            advance();
-            System.out.println(getCommandType());
-            System.out.println(arg1());
-            if (arg2() != null) {
-                System.out.println(arg2());
-            }
-        }
-
+    public Parser(String directory, String fileName) {
+        this.lines = readFile(Paths.get("examples", directory, fileName));
     }
+
 
     public void advance() {
         while (hasMoreCommands()) {
             String line = lines.next();
             if (!line.startsWith("//") && !line.equalsIgnoreCase("")) {
                 current = line;
+                if(line.contains("//")){
+                    current = line.split("//")[0].trim();
+                }
                 break;
             }
         }
     }
-
 
 
     public Command getCommandType() {
@@ -51,9 +45,22 @@ public class Parser {
             return Command.POP;
         } else if (arithmetic.contains(command)) {
             return Command.ARITHMETIC;
+        } else if (command.equalsIgnoreCase("label")) {
+            return Command.LABEL;
+        } else if (command.equalsIgnoreCase("goto")) {
+            return Command.GOTO;
+        } else if (command.equalsIgnoreCase("if-goto")) {
+            return Command.IF;
+        } else if (command.equalsIgnoreCase("return")) {
+            return Command.RETURN;
+        } else if (command.equalsIgnoreCase("call")) {
+            return Command.CALL;
+        } else if (command.equalsIgnoreCase("function")) {
+            return Command.FUNCTION;
         }
         return null;
     }
+
 
     public String arg1() {
         if (getCommandType() == Command.ARITHMETIC) {
@@ -67,9 +74,13 @@ public class Parser {
     }
 
     public Integer arg2() {
-        if (getCommandType() == Command.POP || getCommandType() == Command.PUSH ||
-                getCommandType() == Command.FUNCTION || getCommandType() == Command.CALL){
-            return Integer.parseInt(current.split(" ")[2]);
+        if (getCommandType() == Command.POP || getCommandType() == Command.PUSH) {
+            try {
+                return Integer.parseInt(current.split(" ")[2]);
+            }
+            catch(Exception e){
+                System.out.println("err: "+e);
+            }
         }
         return null;
     }
