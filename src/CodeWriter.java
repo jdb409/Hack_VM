@@ -35,8 +35,8 @@ public class CodeWriter {
     }
 
 
-//    sys init
-    public void writeInit(){
+    //    sys init
+    public void writeInit() {
         lines.add("@256");
         lines.add("D=A");
         lines.add("@SP");
@@ -60,7 +60,7 @@ public class CodeWriter {
         returnIndex++;
 //        push return address
         returnAddress = String.format("%s$ret.%d", arg1, returnIndex);
-        lines.add("@"+returnAddress);
+        lines.add("@" + returnAddress);
         lines.add("D=A");
         pushStack();
 //        save lcl, arg, this, that
@@ -111,7 +111,7 @@ public class CodeWriter {
 //        set frame
         lines.add("@LCL");
         lines.add("D=M");
-        lines.add("@FRAME"+index);
+        lines.add("@FRAME" + index);
         lines.add("M=D");
 
 //        store frame value in register 13
@@ -125,7 +125,7 @@ public class CodeWriter {
 //        RET = *(FRAME-5)
         lines.add("A=D");
         lines.add("D=M");
-        lines.add("@RET"+index);
+        lines.add("@RET" + index);
         lines.add("M=D");
 //        *ARG=pop();
         popLastOne();
@@ -139,34 +139,34 @@ public class CodeWriter {
         lines.add("@SP");
         lines.add("M=D");
 //        restore that,this,arg,lcl
-        lines.add("@FRAME"+index);
+        lines.add("@FRAME" + index);
         lines.add("M=M-1");
         lines.add("A=M");
         lines.add("D=M");
         lines.add("@THAT");
         lines.add("M=D");
 
-        lines.add("@FRAME"+index);
+        lines.add("@FRAME" + index);
         lines.add("M=M-1");
         lines.add("A=M");
         lines.add("D=M");
         lines.add("@THIS");
         lines.add("M=D");
 
-        lines.add("@FRAME"+index);
+        lines.add("@FRAME" + index);
         lines.add("M=M-1");
         lines.add("A=M");
         lines.add("D=M");
         lines.add("@ARG");
         lines.add("M=D");
 
-        lines.add("@FRAME"+index);
+        lines.add("@FRAME" + index);
         lines.add("M=M-1");
         lines.add("A=M");
         lines.add("D=M");
         lines.add("@LCL");
         lines.add("M=D");
-        lines.add("@RET"+index);
+        lines.add("@RET" + index);
         lines.add("D=M");
         lines.add("A=M");
         lines.add("0;JMP");
@@ -246,8 +246,12 @@ public class CodeWriter {
 //    Pop logic
 
     private void popStatic(String filename, int index) {
+        if (getCurrentFile() != null) {
+            fileName = getCurrentFile();
+        }
         lines.add("@" + fileName + "." + index);
-        pop(index);
+
+        pop(index+16);
     }
 
     private void popLocalArgThisThatTempPointer(String segment, int index) {
@@ -361,8 +365,11 @@ public class CodeWriter {
     }
 
     private void pushStatic(String fileName, int index) {
+        if (getCurrentFile() != null) {
+            fileName = getCurrentFile();
+        }
         lines.add("@" + fileName + "." + index);
-        pushSegment(index);
+        pushSegment(index+16);
         pushStack();
     }
 
