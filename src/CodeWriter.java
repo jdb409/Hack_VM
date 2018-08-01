@@ -31,7 +31,7 @@ public class CodeWriter {
         this.lines = new ArrayList<>();
 
         this.fileName = outputFile.split("\\.")[0];
-//        writeInit();
+        writeInit();
     }
 
 
