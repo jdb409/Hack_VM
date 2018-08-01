@@ -18,6 +18,7 @@ public class Parser {
     }
 
     public Parser(String directory, String fileName) {
+        System.out.println(directory + ":" + fileName);
         this.lines = readFile(Paths.get("examples", directory, fileName));
     }
 
@@ -27,7 +28,7 @@ public class Parser {
             String line = lines.next();
             if (!line.startsWith("//") && !line.equalsIgnoreCase("")) {
                 current = line;
-                if(line.contains("//")){
+                if (line.contains("//")) {
                     current = line.split("//")[0].trim();
                 }
                 break;
@@ -74,12 +75,12 @@ public class Parser {
     }
 
     public Integer arg2() {
-        if (getCommandType() == Command.POP || getCommandType() == Command.PUSH) {
+        if (getCommandType() == Command.POP || getCommandType() == Command.PUSH ||
+                getCommandType() == Command.CALL || getCommandType() == Command.FUNCTION) {
             try {
                 return Integer.parseInt(current.split(" ")[2]);
-            }
-            catch(Exception e){
-                System.out.println("err: "+e);
+            } catch (Exception e) {
+                System.out.println("err: " + e);
             }
         }
         return null;

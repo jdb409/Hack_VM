@@ -23,7 +23,9 @@ public class Main {
             for (File vmFile : files) {
                 String fileExtension = vmFile.getName().split("\\.")[1];
                 if (fileExtension.equals("vm")) {
+                    codeWriter.setCurrentFile(vmFile.getName().split("\\.")[0]);
                     Parser parser = new Parser(file.getName(), vmFile.getName());
+
                     writeFile(parser, codeWriter);
                 }
             }
@@ -40,6 +42,10 @@ public class Main {
                 codeWriter.writePushPop(parser.getCommandType(), parser.arg1(), parser.arg2());
             } else if (parser.getCommandType() == Parser.Command.LABEL || parser.getCommandType() == Parser.Command.GOTO || parser.getCommandType() == Parser.Command.IF) {
                 codeWriter.writeLabelGotoIf(parser.getCommandType(), parser.arg1());
+            } else if (parser.getCommandType() == Parser.Command.FUNCTION || parser.getCommandType() == Parser.Command.CALL) {
+                codeWriter.writeFunctionCalls(parser.getCommandType(), parser.arg1(), parser.arg2());
+            } else if (parser.getCommandType() == Parser.Command.RETURN) {
+                codeWriter.writeReturn();
             }
         }
 
